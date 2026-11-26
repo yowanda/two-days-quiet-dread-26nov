@@ -21,6 +21,15 @@ def main():
     path = os.path.join(out_dir, "entry.txt")
     with open(path, "w", encoding="utf-8", newline="") as handle:
         handle.write(COMMENT)
+    # Runtime validation: the file must exist, hold 1-140 UTF-8
+    # characters, and match the expected bytes exactly.
+    with open(path, "rb") as handle:
+        data = handle.read()
+    text = data.decode("utf-8")
+    if not 1 <= len(text) <= 140 or text.strip() == "":
+        raise SystemExit("entry.txt failed validation: length out of range")
+    if data != COMMENT.encode("utf-8"):
+        raise SystemExit("entry.txt failed validation: bytes differ from expected")
 
 
 if __name__ == "__main__":
